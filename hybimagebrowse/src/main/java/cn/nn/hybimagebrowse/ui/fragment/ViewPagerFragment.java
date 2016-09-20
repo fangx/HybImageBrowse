@@ -1,17 +1,19 @@
 package cn.nn.hybimagebrowse.ui.fragment;
 
 import android.graphics.Bitmap;
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import cn.nn.hybimagebrowse.R;
 import cn.nn.hybimagebrowse.helper.ImageDownLoadListener;
 import cn.nn.hybimagebrowse.helper.ImageLoaderHelper;
-import cn.nn.hybimagebrowse.utils.BaseUtil;
 import cn.nn.hybimagebrowse.widget.scalephoto.ImageSource;
+import cn.nn.hybimagebrowse.widget.scalephoto.ImageViewState;
 import cn.nn.hybimagebrowse.widget.scalephoto.SubsamplingScaleImageView;
 
 /**
@@ -68,22 +70,39 @@ public class ViewPagerFragment extends Fragment {
         if (imagepath != null) {
             final SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) rootView.findViewById(R.id.imageView);
 
+            final ProgressBar progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
+
             if (imagepath.startsWith("http")) {
 
+                progressBar.setVisibility(View.VISIBLE);
+
                 imageLoaderHelper.downloadImage(imagepath, new ImageDownLoadListener() {
+
+                    @Override
+                    public void preview(String path) {
+                        imageView.setImage(ImageSource.uri(path), new ImageViewState(0.5F, new PointF(0, 0), 0));
+                    }
+
+                    @Override
+                    public void preview(Bitmap bitmap) {
+                        imageView.setImage(ImageSource.bitmap(bitmap), new ImageViewState(0.5F, new PointF(0, 0), 0));
+                    }
+
                     @Override
                     public void success(String path) {
                         imageView.setImage(ImageSource.uri(path));
+                        progressBar.setVisibility(View.GONE);
                     }
 
                     @Override
                     public void success(Bitmap bitmap) {
                         imageView.setImage(ImageSource.bitmap(bitmap));
+                        progressBar.setVisibility(View.GONE);
                     }
 
                     @Override
                     public void fail() {
-
+                        progressBar.setVisibility(View.GONE);
                     }
                 });
 

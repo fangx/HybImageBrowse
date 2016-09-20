@@ -32,7 +32,6 @@ import cn.nn.hybimagebrowse.utils.BaseUtil;
  */
 public class DefaultImageLoaderHelper implements ImageLoaderHelper {
 
-    // LRUCahce 池子
     private static LruCache<String, Bitmap> mCache;
     private static Handler mHandler;
     private static ExecutorService mThreadPool;
@@ -68,18 +67,15 @@ public class DefaultImageLoaderHelper implements ImageLoaderHelper {
     private void loadBitmapFromNet(String url, ImageDownLoadListener imageDownLoadListener) {
         // 开线程去网络获取
         // 使用线程池管理
-        // new Thread(new ImageLoadTask(iv, url)).start();
 
         // 判断是否有线程在为 imageView加载数据
         Future<?> futrue = mTaskTags.get(url);
         if (futrue != null && !futrue.isCancelled() && !futrue.isDone()) {
-            System.out.println("取消 任务");
             // 线程正在执行
             futrue.cancel(true);
             futrue = null;
         }
 
-        // mThreadPool.execute(new ImageLoadTask(iv, url));
         futrue = mThreadPool.submit(new ImageLoadTask(url, cachePath, imageDownLoadListener));
         // Future 和 callback/Runable
         // 返回值，持有正在执行的线程
@@ -201,14 +197,25 @@ public class DefaultImageLoaderHelper implements ImageLoaderHelper {
     }
 
     @Override
-    public void downloadImage(String path, ImageDownLoadListener imageDownLoadListener) {
+    public void downloadImage(String path,final ImageDownLoadListener imageDownLoadListener) {
 
         // 1.去内存中取
         Bitmap bitmap = mCache.get(path);
 
         if (bitmap != null) {
-            // 直接显示
-            imageDownLoadListener.success(bitmap);
+
+            imageDownLoadListener.preview(bitmap);
+
+            final Bitmap aa = bitmap;
+
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // 直接显示
+                    imageDownLoadListener.success(aa);
+                }
+            },2000);
+
             return;
         }
         // 2.去硬盘上取
@@ -223,6 +230,5 @@ public class DefaultImageLoaderHelper implements ImageLoaderHelper {
 
 
     }
-
 
 }

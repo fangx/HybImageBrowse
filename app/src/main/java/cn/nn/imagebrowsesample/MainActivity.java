@@ -29,8 +29,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void init() {
 
-        images.add("ness.jpg");
-        images.add("squirrel.jpg");
+        images.add("http://img.haoyunbang.cn/app/0c6cd032-98dd-357d-acec-b60ed20155bf/8f6c0736-ca1e-4bce-a05c-b7b0d334c604.jpg");
+        images.add("http://img.haoyunbang.cn/app/0c6cd032-98dd-357d-acec-b60ed20155bf/8f6c0736-ca1e-4bce-a05c-b7b0d334c604.jpg");
+
         imageBrowseFragment = (ImageBrowseFragment) getSupportFragmentManager().findFragmentByTag(IB_FRAGMENT_TAG);
 
         if (imageBrowseFragment == null) {
