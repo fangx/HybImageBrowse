@@ -3,10 +3,9 @@ package cn.nn.hybimagebrowse.helper;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.util.LruCache;
-import android.widget.ImageView;
+import android.text.TextUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,6 +41,12 @@ public class DefaultImageLoaderHelper implements ImageLoaderHelper {
     public DefaultImageLoaderHelper(Context context, String cachePath) {
         this.mContext = context;
         this.cachePath = cachePath;
+        if (!TextUtils.isEmpty(cachePath)) {
+            File file = new File(cachePath);
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+        }
         if (mCache == null) {
             // 最大使用的内存空间
             int maxSize = (int) (Runtime.getRuntime().freeMemory() / 4);
@@ -137,7 +142,6 @@ public class DefaultImageLoaderHelper implements ImageLoaderHelper {
                     });
                 }
             } catch (Exception e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -165,7 +169,6 @@ public class DefaultImageLoaderHelper implements ImageLoaderHelper {
             }
 
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -197,14 +200,14 @@ public class DefaultImageLoaderHelper implements ImageLoaderHelper {
     }
 
     @Override
-    public void downloadImage(String path,final ImageDownLoadListener imageDownLoadListener) {
+    public void downloadImage(String path, final ImageDownLoadListener imageDownLoadListener) {
 
         // 1.去内存中取
         Bitmap bitmap = mCache.get(path);
 
         if (bitmap != null) {
 
-            imageDownLoadListener.preview(bitmap);
+//            imageDownLoadListener.preview(bitmap);
 
             final Bitmap aa = bitmap;
 
@@ -214,7 +217,7 @@ public class DefaultImageLoaderHelper implements ImageLoaderHelper {
                     // 直接显示
                     imageDownLoadListener.success(aa);
                 }
-            },2000);
+            }, 2000);
 
             return;
         }
