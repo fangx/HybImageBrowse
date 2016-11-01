@@ -49,6 +49,8 @@ public class ImageBrowseFragment extends Fragment {
     private int photoLeft = 0;
     private int photoWidth = 0;
     private int photoHeight = 0;
+    private int photoRowHeight = 0;
+    private int photoColumn = 0;
 
     private ImageLoaderHelper imageLoaderHelper;
 
@@ -61,13 +63,15 @@ public class ImageBrowseFragment extends Fragment {
     public final static String PHOTO_LEFT = "photo_left";
     public final static String PHOTO_WIDTH = "photo_width";
     public final static String PHOTO_HEIGHT = "photo_height";
+    public final static String PHOTO_ROWHEIGHT = "photo_rowheight";
+    public final static String PHOTO_COLUMN = "photo_column";
     public final static String PHOTO_ANIM = "photo_anim";
 
     //动画持续时间
-    public final static int DURATION = 300;
+    public final static int DURATION = 200;
 
-    private final ColorMatrix colorizerMatrix = new ColorMatrix();
 
+    //默认无动画效果
     public static ImageBrowseFragment newInstance(List<String> images, int currentItem) {
         Bundle args = new Bundle();
         ImageBrowseFragment fragment = new ImageBrowseFragment();
@@ -78,18 +82,48 @@ public class ImageBrowseFragment extends Fragment {
         return fragment;
     }
 
-
-    public static ImageBrowseFragment newInstance(List<String> images, int currentItem, int[] screenLocation, int thumbnailWidth, int thumbnailHeight) {
+    /**
+     * 用于单个imageview布局时动画效果
+     *
+     * @param images         图片地址
+     * @param currentItem    当前条目
+     * @param screenLocation 图片当前所处屏幕位置
+     * @param photoWidth     图片小图的宽度
+     * @param photoHeight    图片小图的高度
+     * @return
+     */
+    public static ImageBrowseFragment newInstance(List<String> images, int currentItem, int[] screenLocation, int photoWidth, int photoHeight) {
         ImageBrowseFragment f = newInstance(images, currentItem);
 
         f.getArguments().putInt(PHOTO_LEFT, screenLocation[0]);
         f.getArguments().putInt(PHOTO_TOP, screenLocation[1]);
-        f.getArguments().putInt(PHOTO_WIDTH, thumbnailWidth);
-        f.getArguments().putInt(PHOTO_HEIGHT, thumbnailHeight);
+        f.getArguments().putInt(PHOTO_WIDTH, photoWidth);
+        f.getArguments().putInt(PHOTO_HEIGHT, photoHeight);
         f.getArguments().putBoolean(PHOTO_ANIM, true);
 
         return f;
     }
+
+
+    /**
+     * 用于grid布局时退出动画效果
+     *
+     * @param images         图片地址
+     * @param currentItem    当前条目
+     * @param screenLocation 图片当前所处屏幕位置
+     * @param photoWidth     图片小图的宽度
+     * @param photoHeight    图片小图的高度
+     * @param column         grid布局列数
+     * @param rowHeight      grid布局行高
+     * @return
+     */
+    public static ImageBrowseFragment newInstance(List<String> images, int currentItem, int[] screenLocation, int photoWidth, int photoHeight, int column, int rowHeight) {
+        ImageBrowseFragment f = newInstance(images, currentItem, screenLocation, photoWidth, photoHeight);
+        f.getArguments().putInt(PHOTO_COLUMN, column);
+        f.getArguments().putInt(PHOTO_COLUMN, rowHeight);
+        return f;
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,6 +142,8 @@ public class ImageBrowseFragment extends Fragment {
             photoLeft = bundle.getInt(PHOTO_LEFT);
             photoWidth = bundle.getInt(PHOTO_WIDTH);
             photoHeight = bundle.getInt(PHOTO_HEIGHT);
+            photoRowHeight = bundle.getInt(PHOTO_ROWHEIGHT);
+            photoColumn = bundle.getInt(PHOTO_COLUMN);
         }
     }
 
@@ -165,6 +201,7 @@ public class ImageBrowseFragment extends Fragment {
     private void runEnterAnimation(final Runnable startAction) {
         final long duration = DURATION;
 
+
         // Set starting values for properties we're going to animate. These
         // values scale and position the full size version down to the thumbnail
         // size/location, from which we'll animate it back up
@@ -185,6 +222,7 @@ public class ImageBrowseFragment extends Fragment {
                 .setInterpolator(new DecelerateInterpolator()).setListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
+                viewpager.setAlpha(1);
                 startAction.run();
             }
 
@@ -236,10 +274,29 @@ public class ImageBrowseFragment extends Fragment {
 
         final long duration = DURATION;
 
+
+        //当viewpager页面发生切换时重新计算图片位置以使缩小动画执行到当前图片位置
+        int currentIndex = viewpager.getCurrentItem();
+
+        //当前图片非进入的图片
+        if (currentIndex != currentItem) {
+            if (photoColumn != 0) {
+                int beforeColumn = currentItem % photoColumn;
+                int beforeRow = currentItem / photoColumn;
+
+                int nowColumn = currentIndex % photoColumn;
+                int nowRow = currentIndex / photoColumn;
+
+                photoLeft = photoLeft + (nowColumn - beforeColumn) * photoWidth;
+                photoTop = photoTop + (nowRow - beforeRow) * photoHeight;
+            }
+        }
+
+
         // Animate image back to thumbnail size/location
         ViewPropertyAnimator.animate(viewpager)
                 .setDuration(duration)
-                .setInterpolator(new AccelerateInterpolator())
+                .setInterpolator(new DecelerateInterpolator())
                 .scaleX((float) photoWidth / viewpager.getWidth())
                 .scaleY((float) photoHeight / viewpager.getHeight())
                 .translationX(photoLeft)
@@ -251,6 +308,7 @@ public class ImageBrowseFragment extends Fragment {
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
+                        viewpager.setAlpha(0);
                         endAction.run();
                     }
 
