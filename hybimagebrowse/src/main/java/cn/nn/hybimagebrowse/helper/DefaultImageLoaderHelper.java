@@ -104,7 +104,6 @@ public class DefaultImageLoaderHelper implements ImageLoaderHelper {
 
         @Override
         public void run() {
-            // HttpUrlconnection
             try {
                 // 获取连接
                 HttpURLConnection conn = (HttpURLConnection) new URL(mUrl).openConnection();
