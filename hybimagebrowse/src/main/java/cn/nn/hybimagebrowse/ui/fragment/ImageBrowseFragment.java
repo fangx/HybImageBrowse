@@ -158,35 +158,35 @@ public class ImageBrowseFragment extends Fragment {
         viewpager = (ViewPager) rootView.findViewById(R.id.viewpager);
         viewpager.setAdapter(pagerAdapter);
         viewpager.setCurrentItem(currentItem);
-        if (savedInstanceState == null && phototAnim) {
-            ViewTreeObserver observer = viewpager.getViewTreeObserver();
-            observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-
-                    viewpager.getViewTreeObserver().removeOnPreDrawListener(this);
-
-                    int[] screenLocation = new int[2];
-                    viewpager.getLocationOnScreen(screenLocation);
-                    photoLeft = photoLeft - screenLocation[0];
-                    photoTop = photoTop - screenLocation[1];
-
-                    runEnterAnimation(new Runnable() {
-                        @Override
-                        public void run() {
-                            getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                    | View.SYSTEM_UI_FLAG_IMMERSIVE);
-                        }
-                    });
-
-                    return true;
-                }
-            });
-        }
+//        if (savedInstanceState == null && phototAnim) {
+//            ViewTreeObserver observer = viewpager.getViewTreeObserver();
+//            observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+//                @Override
+//                public boolean onPreDraw() {
+//
+//                    viewpager.getViewTreeObserver().removeOnPreDrawListener(this);
+//
+//                    int[] screenLocation = new int[2];
+//                    viewpager.getLocationOnScreen(screenLocation);
+//                    photoLeft = photoLeft - screenLocation[0];
+//                    photoTop = photoTop - screenLocation[1];
+//
+//                    runEnterAnimation(new Runnable() {
+//                        @Override
+//                        public void run() {
+////                            getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+////                                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+////                                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+////                                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+////                                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+////                                    | View.SYSTEM_UI_FLAG_IMMERSIVE);
+//                        }
+//                    });
+//
+//                    return true;
+//                }
+//            });
+//        }
 
 
         return rootView;
@@ -308,7 +308,6 @@ public class ImageBrowseFragment extends Fragment {
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        viewpager.setAlpha(0);
                         endAction.run();
                     }
 
@@ -353,4 +352,11 @@ public class ImageBrowseFragment extends Fragment {
     }
 
 
+    //获取当前展示第几个页面
+    public int getCurrentItem() {
+        if(viewpager != null){
+            return viewpager.getCurrentItem();
+        }
+        return 0;
+    }
 }
