@@ -1,7 +1,9 @@
 package cn.nn.hybimagebrowse.utils;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Environment;
+import android.util.TypedValue;
 
 import java.io.File;
 import java.math.BigInteger;
@@ -61,6 +63,14 @@ public class BaseUtil {
             e.printStackTrace();
         }
         return password;
+    }
+
+
+    public static int dp2px(Context context, float dp) {
+        Resources r = context.getResources();
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+                r.getDisplayMetrics());
+        return (int) px;
     }
 
 

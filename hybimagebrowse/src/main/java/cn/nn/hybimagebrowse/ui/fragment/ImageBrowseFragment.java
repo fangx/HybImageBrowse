@@ -16,6 +16,7 @@ import cn.nn.hybimagebrowse.R;
 import cn.nn.hybimagebrowse.adapter.ImagePagerAdapter;
 import cn.nn.hybimagebrowse.helper.DefaultImageLoader;
 import cn.nn.hybimagebrowse.helper.ImageLoader;
+import cn.nn.hybimagebrowse.helper.PageChangeListener;
 import cn.nn.hybimagebrowse.ui.activity.ImageBrowseActivity;
 import cn.nn.hybimagebrowse.utils.BaseUtil;
 
@@ -35,6 +36,8 @@ public class ImageBrowseFragment extends Fragment {
     private int currentItem;
 
     private ImageLoader imageLoader;
+
+    private PageChangeListener pageChangeListener;
 
     //缓存目录地址
     private String cacheDir = "";
@@ -80,6 +83,30 @@ public class ImageBrowseFragment extends Fragment {
         viewpager = (ViewPager) rootView.findViewById(R.id.viewpager);
         viewpager.setAdapter(pagerAdapter);
         viewpager.setCurrentItem(currentItem);
+        viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                if(pageChangeListener != null){
+                    pageChangeListener.onPageScrolled(position,positionOffset,positionOffsetPixels);
+                }
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if(pageChangeListener != null){
+                    pageChangeListener.onPageSelected(position);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                if(pageChangeListener != null){
+                    pageChangeListener.onPageScrollStateChanged(state);
+                }
+            }
+        });
         return rootView;
     }
 
@@ -101,6 +128,14 @@ public class ImageBrowseFragment extends Fragment {
         this.cacheDir = cacheDir;
     }
 
+
+    public PageChangeListener getPageChangeListener() {
+        return pageChangeListener;
+    }
+
+    public void setPageChangeListener(PageChangeListener pageChangeListener) {
+        this.pageChangeListener = pageChangeListener;
+    }
 
     //获取当前展示第几个页面
     public int getCurrentItem() {

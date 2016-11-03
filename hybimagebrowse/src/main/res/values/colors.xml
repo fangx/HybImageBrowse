@@ -6,4 +6,5 @@
     <color name="bg_black">#000000</color>
     <color name="pager_bg">#CA000000</color>
     <color name="transparent">#00000000</color>
+    <color name="white">#ffffff</color>
 </resources>

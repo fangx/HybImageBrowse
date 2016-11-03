@@ -2,7 +2,9 @@ package cn.nn.hybimagebrowse.ui.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
@@ -17,7 +19,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import cn.nn.hybimagebrowse.R;
+import cn.nn.hybimagebrowse.helper.PageChangeListener;
 import cn.nn.hybimagebrowse.ui.fragment.ImageBrowseFragment;
+import cn.nn.hybimagebrowse.utils.BaseUtil;
 
 /**
  * **************************
@@ -30,8 +34,10 @@ import cn.nn.hybimagebrowse.ui.fragment.ImageBrowseFragment;
 public class ImageBrowseActivity extends AppCompatActivity {
 
     private LinearLayout fragment_layout;
+    private LinearLayout page_index_layout;
     private ImageBrowseFragment imageBrowseFragment;
     private List<String> images = new ArrayList<>();
+    private List<View> dots = new ArrayList<>();
     private boolean phototAnim;
     private int currentItem;
 
@@ -41,7 +47,6 @@ public class ImageBrowseActivity extends AppCompatActivity {
     public final static String PHOTO_LEFT = "photo_left";
     public final static String PHOTO_WIDTH = "photo_width";
     public final static String PHOTO_HEIGHT = "photo_height";
-    public final static String PHOTO_ROWHEIGHT = "photo_rowheight";
     public final static String PHOTO_COLUMN = "photo_column";
     public final static String PHOTO_ANIM = "photo_anim";
 
@@ -57,11 +62,14 @@ public class ImageBrowseActivity extends AppCompatActivity {
     public final static int ENTER_DURATION = 200;
     public final static int EXIT_DURATION = 100;
 
+    private int dot_size = 6;
+
+    private int dot_padding = 5;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.image_browse_activity);
-
         init(savedInstanceState);
     }
 
@@ -70,6 +78,7 @@ public class ImageBrowseActivity extends AppCompatActivity {
 
         fragment_layout = (LinearLayout) findViewById(R.id.fragment);
 
+        page_index_layout = (LinearLayout) findViewById(R.id.page_index_layout);
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -94,6 +103,40 @@ public class ImageBrowseActivity extends AppCompatActivity {
                 .replace(R.id.fragment, imageBrowseFragment)
                 .addToBackStack(null)
                 .commit();
+
+
+        if (images.size() > 1) {
+            dots.clear();
+            int dot_wh = BaseUtil.dp2px(this, dot_size);
+            int dot_p = BaseUtil.dp2px(this, dot_padding);
+            for (int i = 0; i < images.size(); i++) {
+                View v = new View(this);
+                v.setBackgroundResource(R.drawable.dot_bg);
+                LinearLayout.LayoutParams parme = new LinearLayout.LayoutParams(dot_wh, dot_wh);
+                parme.setMargins(dot_p, dot_p, dot_p, dot_p);
+                page_index_layout.addView(v, parme);
+                dots.add(v);
+            }
+        }
+
+        initDots(currentItem);
+
+        imageBrowseFragment.setPageChangeListener(new PageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                initDots(position);
+            }
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
 
         if (savedInstanceState == null && phototAnim) {
@@ -121,9 +164,18 @@ public class ImageBrowseActivity extends AppCompatActivity {
             });
         }
 
-
     }
 
+    //重置dot的状态
+    private void initDots(int position) {
+        for (int i = 0; i < dots.size(); i++) {
+            if (i == position) {
+                dots.get(i).setSelected(true);
+            } else {
+                dots.get(i).setSelected(false);
+            }
+        }
+    }
 
     private void runEnterAnimation(final Runnable startAction) {
         final long duration = ENTER_DURATION;
@@ -144,6 +196,7 @@ public class ImageBrowseActivity extends AppCompatActivity {
                 .setInterpolator(new DecelerateInterpolator()).setListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
+                fragment_layout.setAlpha(1);
                 startAction.run();
             }
 
@@ -163,11 +216,6 @@ public class ImageBrowseActivity extends AppCompatActivity {
             }
         });
 
-
-        ObjectAnimator colorizer = ObjectAnimator.ofFloat(ImageBrowseActivity.this,
-                "saturation", 0, 1);
-        colorizer.setDuration(duration);
-        colorizer.start();
 
     }
 
@@ -227,14 +275,6 @@ public class ImageBrowseActivity extends AppCompatActivity {
                     }
                 });
 
-        ObjectAnimator bgAnim = ObjectAnimator.ofInt(fragment_layout.getBackground(), "alpha", 0);
-        bgAnim.setDuration(duration);
-        bgAnim.start();
-
-        ObjectAnimator colorizer =
-                ObjectAnimator.ofFloat(ImageBrowseActivity.this, "saturation", 1, 0);
-        colorizer.setDuration(duration);
-        colorizer.start();
     }
 
 
