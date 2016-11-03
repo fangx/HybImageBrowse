@@ -29,19 +29,27 @@ import cn.nn.hybimagebrowse.ui.fragment.ImageBrowseFragment;
  */
 public class ImageBrowseActivity extends AppCompatActivity {
 
-
     private LinearLayout fragment_layout;
-
     private ImageBrowseFragment imageBrowseFragment;
     private List<String> images = new ArrayList<>();
     private boolean phototAnim;
     private int currentItem;
+
+    public final static String PHOTO_PATHS = "photo_paths";
+    public final static String PHOTO_CURRENT_ITEM = "photo_current_item";
+    public final static String PHOTO_TOP = "photo_top";
+    public final static String PHOTO_LEFT = "photo_left";
+    public final static String PHOTO_WIDTH = "photo_width";
+    public final static String PHOTO_HEIGHT = "photo_height";
+    public final static String PHOTO_ROWHEIGHT = "photo_rowheight";
+    public final static String PHOTO_COLUMN = "photo_column";
+    public final static String PHOTO_ANIM = "photo_anim";
+
     //用于做图片动画
     private int photoTop = 0;
     private int photoLeft = 0;
     private int photoWidth = 0;
     private int photoHeight = 0;
-    private int photoRowHeight = 0;
     private int photoColumn = 0;
 
 
@@ -60,29 +68,27 @@ public class ImageBrowseActivity extends AppCompatActivity {
 
     private void init(Bundle savedInstanceState) {
 
-        fragment_layout = (LinearLayout)findViewById(R.id.fragment);
+        fragment_layout = (LinearLayout) findViewById(R.id.fragment);
 
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            String[] pathArr = bundle.getStringArray(ImageBrowseFragment.PHOTO_PATHS);
+            String[] pathArr = bundle.getStringArray(PHOTO_PATHS);
             images.clear();
             if (pathArr != null) {
                 images = new ArrayList<>(Arrays.asList(pathArr));
             }
-            phototAnim = bundle.getBoolean(ImageBrowseFragment.PHOTO_ANIM);
-            currentItem = bundle.getInt(ImageBrowseFragment.PHOTO_CURRENT_ITEM);
-            photoTop = bundle.getInt(ImageBrowseFragment.PHOTO_TOP);
-            photoLeft = bundle.getInt(ImageBrowseFragment.PHOTO_LEFT);
-            photoWidth = bundle.getInt(ImageBrowseFragment.PHOTO_WIDTH);
-            photoHeight = bundle.getInt(ImageBrowseFragment.PHOTO_HEIGHT);
-            photoRowHeight = bundle.getInt(ImageBrowseFragment.PHOTO_ROWHEIGHT);
-            photoColumn = bundle.getInt(ImageBrowseFragment.PHOTO_COLUMN);
+            phototAnim = bundle.getBoolean(PHOTO_ANIM);
+            currentItem = bundle.getInt(PHOTO_CURRENT_ITEM);
+            photoTop = bundle.getInt(PHOTO_TOP);
+            photoLeft = bundle.getInt(PHOTO_LEFT);
+            photoWidth = bundle.getInt(PHOTO_WIDTH);
+            photoHeight = bundle.getInt(PHOTO_HEIGHT);
+            photoColumn = bundle.getInt(PHOTO_COLUMN);
         }
 
         imageBrowseFragment =
-                ImageBrowseFragment.newInstance(images, currentItem, new int[]{photoTop, photoLeft}, photoWidth,
-                        photoHeight, photoColumn, photoHeight);
+                ImageBrowseFragment.newInstance(images, currentItem);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction
                 .replace(R.id.fragment, imageBrowseFragment)
@@ -106,12 +112,7 @@ public class ImageBrowseActivity extends AppCompatActivity {
                     runEnterAnimation(new Runnable() {
                         @Override
                         public void run() {
-//                            getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-//                                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                                    | View.SYSTEM_UI_FLAG_IMMERSIVE);
+
                         }
                     });
 
@@ -124,20 +125,9 @@ public class ImageBrowseActivity extends AppCompatActivity {
     }
 
 
-
-    /**
-     * The enter animation scales the picture in from its previous thumbnail
-     * size/location, colorizing it in parallel. In parallel, the background of the
-     * activity is fading in. When the pictue is in place, the text description
-     * drops down.
-     */
     private void runEnterAnimation(final Runnable startAction) {
         final long duration = ENTER_DURATION;
 
-
-        // Set starting values for properties we're going to animate. These
-        // values scale and position the full size version down to the thumbnail
-        // size/location, from which we'll animate it back up
         ViewHelper.setPivotX(fragment_layout, 0);
         ViewHelper.setPivotY(fragment_layout, 0);
         ViewHelper.setScaleX(fragment_layout, (float) photoWidth / fragment_layout.getWidth());
@@ -145,7 +135,6 @@ public class ImageBrowseActivity extends AppCompatActivity {
         ViewHelper.setTranslationX(fragment_layout, photoLeft);
         ViewHelper.setTranslationY(fragment_layout, photoTop);
 
-        // Animate scale and translation to go from thumbnail to full size
         ViewPropertyAnimator.animate(fragment_layout)
                 .setDuration(duration)
                 .scaleX(1)
@@ -174,13 +163,7 @@ public class ImageBrowseActivity extends AppCompatActivity {
             }
         });
 
-//        // Fade in the black background
-//        ObjectAnimator bgAnim = ObjectAnimator.ofInt(viewpager.getBackground(), "alpha", 0, 255);
-//        bgAnim.setDuration(duration);
-//        bgAnim.start();
 
-        // Animate a color filter to take the image from grayscale to full color.
-        // This happens in parallel with the image scaling and moving into place.
         ObjectAnimator colorizer = ObjectAnimator.ofFloat(ImageBrowseActivity.this,
                 "saturation", 0, 1);
         colorizer.setDuration(duration);
@@ -189,14 +172,6 @@ public class ImageBrowseActivity extends AppCompatActivity {
     }
 
 
-    /**
-     * The exit animation is basically a reverse of the enter animation, except that if
-     * the orientation has changed we simply scale the picture back into the center of
-     * the screen.
-     *
-     * @param endAction This action gets run after the animation completes (this is
-     *                  when we actually switch activities)
-     */
     public void runExitAnimation(final Runnable endAction) {
 
         if (!phototAnim) {
@@ -225,7 +200,6 @@ public class ImageBrowseActivity extends AppCompatActivity {
         }
 
 
-        // Animate image back to thumbnail size/location
         ViewPropertyAnimator.animate(fragment_layout)
                 .setDuration(duration)
                 .setInterpolator(new DecelerateInterpolator())
@@ -253,22 +227,15 @@ public class ImageBrowseActivity extends AppCompatActivity {
                     }
                 });
 
-        // Fade out background
         ObjectAnimator bgAnim = ObjectAnimator.ofInt(fragment_layout.getBackground(), "alpha", 0);
         bgAnim.setDuration(duration);
         bgAnim.start();
 
-        // Animate a color filter to take the image back to grayscale,
-        // in parallel with the image scaling and moving into place.
         ObjectAnimator colorizer =
                 ObjectAnimator.ofFloat(ImageBrowseActivity.this, "saturation", 1, 0);
         colorizer.setDuration(duration);
         colorizer.start();
     }
-
-
-
-
 
 
     @Override
@@ -279,10 +246,6 @@ public class ImageBrowseActivity extends AppCompatActivity {
                 if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                     getSupportFragmentManager().popBackStack();
                 }
-//                getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-
                 ImageBrowseActivity.this.finish();
                 overridePendingTransition(0, 0);
 

@@ -29,7 +29,7 @@ import cn.nn.hybimagebrowse.utils.BaseUtil;
  * Description:
  * ***************************
  */
-public class DefaultImageLoaderHelper implements ImageLoaderHelper {
+public class DefaultImageLoader implements ImageLoader {
 
     private static LruCache<String, Bitmap> mCache;
     private static Handler mHandler;
@@ -38,7 +38,7 @@ public class DefaultImageLoaderHelper implements ImageLoaderHelper {
     private Context mContext;
     private String cachePath;
 
-    public DefaultImageLoaderHelper(Context context, String cachePath) {
+    public DefaultImageLoader(Context context, String cachePath) {
         this.mContext = context;
         this.cachePath = cachePath;
         if (!TextUtils.isEmpty(cachePath)) {

@@ -109,15 +109,15 @@ public class GridTestActivity extends AppCompatActivity {
                     Intent intent = new Intent(GridTestActivity.this, ImageBrowseActivity.class);
 
                     Bundle bundle = new Bundle();
-                    bundle.putStringArray(ImageBrowseFragment.PHOTO_PATHS, list.toArray(new String[list.size()]));
-                    bundle.putInt(ImageBrowseFragment.PHOTO_CURRENT_ITEM, helper.getAdapterPosition());
-                    bundle.putInt(ImageBrowseFragment.PHOTO_LEFT, screenLocation[0]);
-                    bundle.putInt(ImageBrowseFragment.PHOTO_TOP, screenLocation[1]);
-                    bundle.putInt(ImageBrowseFragment.PHOTO_WIDTH, v.getWidth());
-                    bundle.putInt(ImageBrowseFragment.PHOTO_HEIGHT, v.getHeight());
-                    bundle.putBoolean(ImageBrowseFragment.PHOTO_ANIM, true);
-                    bundle.putInt(ImageBrowseFragment.PHOTO_COLUMN, column);
-                    bundle.putInt(ImageBrowseFragment.PHOTO_COLUMN, v.getHeight());
+                    bundle.putStringArray(ImageBrowseActivity.PHOTO_PATHS, list.toArray(new String[list.size()]));
+                    bundle.putInt(ImageBrowseActivity.PHOTO_CURRENT_ITEM, helper.getAdapterPosition());
+                    bundle.putInt(ImageBrowseActivity.PHOTO_LEFT, screenLocation[0]);
+                    bundle.putInt(ImageBrowseActivity.PHOTO_TOP, screenLocation[1]);
+                    bundle.putInt(ImageBrowseActivity.PHOTO_WIDTH, v.getWidth());
+                    bundle.putInt(ImageBrowseActivity.PHOTO_HEIGHT, v.getHeight());
+                    bundle.putBoolean(ImageBrowseActivity.PHOTO_ANIM, true);
+                    bundle.putInt(ImageBrowseActivity.PHOTO_COLUMN, column);
+                    bundle.putInt(ImageBrowseActivity.PHOTO_COLUMN, v.getHeight());
                     intent.putExtras(bundle);
                     startActivity(intent);
                     overridePendingTransition(0, 0);

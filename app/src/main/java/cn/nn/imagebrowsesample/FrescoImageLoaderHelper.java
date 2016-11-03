@@ -1,34 +1,6 @@
 package cn.nn.imagebrowsesample;
 
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.text.TextUtils;
-import android.util.Log;
-
-import com.facebook.binaryresource.BinaryResource;
-import com.facebook.binaryresource.FileBinaryResource;
-import com.facebook.cache.common.CacheKey;
-import com.facebook.cache.disk.FileCache;
-import com.facebook.common.executors.CallerThreadExecutor;
-import com.facebook.common.references.CloseableReference;
-import com.facebook.datasource.DataSource;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.imagepipeline.cache.DefaultCacheKeyFactory;
-import com.facebook.imagepipeline.core.ImagePipeline;
-import com.facebook.imagepipeline.core.ImagePipelineFactory;
-import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
-import com.facebook.imagepipeline.image.CloseableImage;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import cn.nn.hybimagebrowse.helper.ImageDownLoadListener;
-import cn.nn.hybimagebrowse.helper.ImageLoaderHelper;
 
 /**
  * **************************

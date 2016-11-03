@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.nn.hybimagebrowse.helper.ImageLoaderHelper;
+import cn.nn.hybimagebrowse.helper.ImageLoader;
 import cn.nn.hybimagebrowse.ui.fragment.ViewPagerFragment;
 
 /**
@@ -22,27 +22,27 @@ public class ImagePagerAdapter extends FragmentStatePagerAdapter {
 
     private List<String> images = new ArrayList<>();
 
-    private ImageLoaderHelper imageLoaderHelper;
+    private ImageLoader imageLoader;
 
     private String cacheDir = "";
 
-    public ImagePagerAdapter(FragmentManager fm, List<String> images,ImageLoaderHelper imageLoaderHelper) {
+    public ImagePagerAdapter(FragmentManager fm, List<String> images,ImageLoader imageLoader) {
         super(fm);
         this.images = images;
-        this.imageLoaderHelper = imageLoaderHelper;
+        this.imageLoader = imageLoader;
     }
 
     public void setCacheDir(String cacheDir) {
         this.cacheDir = cacheDir;
     }
 
-    public void setImageLoaderHelper(ImageLoaderHelper imageLoaderHelper) {
-        this.imageLoaderHelper = imageLoaderHelper;
+    public void setImageLoader(ImageLoader imageLoader) {
+        this.imageLoader = imageLoader;
     }
 
     @Override
     public Fragment getItem(int position) {
-        ViewPagerFragment fragment = new ViewPagerFragment(imageLoaderHelper);
+        ViewPagerFragment fragment = new ViewPagerFragment(imageLoader);
         fragment.setImagepath(images.get(position));
         fragment.setCacheDir(cacheDir);
         return fragment;

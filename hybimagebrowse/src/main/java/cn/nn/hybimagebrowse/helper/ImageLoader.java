@@ -10,7 +10,7 @@ import android.app.Activity;
  * Description:
  * ***************************
  */
-public interface ImageLoaderHelper {
+public interface ImageLoader {
 
     void downloadImage(String path,ImageDownLoadListener imageDownLoadListener);
 

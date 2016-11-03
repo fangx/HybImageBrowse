@@ -11,7 +11,7 @@ import android.widget.ProgressBar;
 
 import cn.nn.hybimagebrowse.R;
 import cn.nn.hybimagebrowse.helper.ImageDownLoadListener;
-import cn.nn.hybimagebrowse.helper.ImageLoaderHelper;
+import cn.nn.hybimagebrowse.helper.ImageLoader;
 import cn.nn.hybimagebrowse.widget.scalephoto.ImageSource;
 import cn.nn.hybimagebrowse.widget.scalephoto.ImageViewState;
 import cn.nn.hybimagebrowse.widget.scalephoto.SubsamplingScaleImageView;
@@ -30,7 +30,7 @@ public class ViewPagerFragment extends Fragment {
 
     private String imagepath;
 
-    private ImageLoaderHelper imageLoaderHelper;
+    private ImageLoader imageLoader;
 
     private String cacheDir = "";
     //占位图
@@ -38,8 +38,8 @@ public class ViewPagerFragment extends Fragment {
     //失败图
     private String failImage = "";
 
-    public ViewPagerFragment(ImageLoaderHelper imageLoaderHelper) {
-        this.imageLoaderHelper = imageLoaderHelper;
+    public ViewPagerFragment(ImageLoader imageLoader) {
+        this.imageLoader = imageLoader;
     }
 
     public void setImagepath(String imagepath) {
@@ -76,7 +76,7 @@ public class ViewPagerFragment extends Fragment {
 
                 progressBar.setVisibility(View.VISIBLE);
 
-                imageLoaderHelper.downloadImage(imagepath, new ImageDownLoadListener() {
+                imageLoader.downloadImage(imagepath, new ImageDownLoadListener() {
 
                     @Override
                     public void preview(String path) {
