@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 import cn.nn.hybimagebrowse.R;
 import cn.nn.hybimagebrowse.helper.ImageDownLoadListener;
 import cn.nn.hybimagebrowse.helper.ImageLoader;
+import cn.nn.hybimagebrowse.widget.dialog.PhotoSaveDialog;
 import cn.nn.hybimagebrowse.widget.scalephoto.ImageSource;
 import cn.nn.hybimagebrowse.widget.scalephoto.ImageViewState;
 import cn.nn.hybimagebrowse.widget.scalephoto.SubsamplingScaleImageView;
@@ -109,6 +110,27 @@ public class ViewPagerFragment extends Fragment {
             } else {
                 imageView.setImage(ImageSource.uri(imagepath));
             }
+
+
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PhotoSaveDialog photoSaveDialog = new PhotoSaveDialog(getActivity());
+                    photoSaveDialog.show();
+                }
+            });
+//            imageView.setOnLongClickListener(new View.OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View v) {
+//
+//                    PhotoSaveDialog photoSaveDialog = new PhotoSaveDialog(getActivity());
+//
+//                    photoSaveDialog.show();
+//
+//                    return true;
+//                }
+//            });
+
 
         }
 
