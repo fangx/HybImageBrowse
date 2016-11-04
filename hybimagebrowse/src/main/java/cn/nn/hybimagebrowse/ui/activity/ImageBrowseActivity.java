@@ -196,13 +196,14 @@ public class ImageBrowseActivity extends AppCompatActivity {
                 .setInterpolator(new DecelerateInterpolator()).setListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
+                page_index_layout.setVisibility(View.GONE);
                 fragment_layout.setAlpha(1);
                 startAction.run();
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
-
+                page_index_layout.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -258,6 +259,7 @@ public class ImageBrowseActivity extends AppCompatActivity {
                 .setListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
+                        page_index_layout.setVisibility(View.GONE);
                     }
 
                     @Override
