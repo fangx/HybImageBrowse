@@ -1,13 +1,22 @@
 package cn.nn.hybimagebrowse.widget.dialog;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +38,8 @@ public class PhotoSaveDialog extends BaseDialog {
     private PhotoDialogAdapter photoDialogAdapter;
 
     private List<String> items = new ArrayList<>();
+
+    private PopItemClickListener popItemClickListener;
 
     public PhotoSaveDialog(Context context) {
         super(context);
@@ -61,19 +72,24 @@ public class PhotoSaveDialog extends BaseDialog {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                switch (position) {
-                    case 0:
-
-                        break;
-                    case 1:
-                        PhotoSaveDialog.this.dismiss();
-                        break;
-
+                if (popItemClickListener != null) {
+                    popItemClickListener.click(position);
                 }
 
             }
         });
 
     }
+
+
+    public void setPopItemClickListener(PopItemClickListener popItemClickListener) {
+        this.popItemClickListener = popItemClickListener;
+    }
+
+    //条目选择监听
+    public interface PopItemClickListener {
+        void click(int position);
+    }
+
 
 }
